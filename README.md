@@ -1,14 +1,18 @@
-# nasa-cyan
-Cyanobacteria analysis with NASA CYAN data
+# Cyanobacteria Analysis with NASA CYAN Data
 
 To run analysis dashboard:
+
 ```python dashboard.py -path data/L3B_CYAN_DAILY_mendota.parquet```
 
 To generate Cyanobacteria forecast:
+
 ```python forecast.py -path data/L3B_CYAN_DAILY_mendota.parquet```
 
 To download data from CYAN project:
+
 ```python cyan_extract.py```
+
+
 
 ## Using Google Colab:
 Clone the repository and install requirements:
