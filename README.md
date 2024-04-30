@@ -1,5 +1,7 @@
 # Cyanobacteria Analysis with NASA CYAN Data
 
+https://oceancolor.gsfc.nasa.gov/about/projects/cyan/
+
 ## Data Extraction from CYAN Project
 
 Run the script below to extract L3B_CYAN_DAILY data for February 2 - 4, 2023. Save the data in .parquet format via path "./data/test.parquet".
