@@ -5,19 +5,17 @@ name = "pypi"
 
 [packages]
 pandas = "*"
+numpy = "*"
 requests = "*"
 sqlalchemy = "*"
-numpy = "*"
-pmdarima = "*"
+pymysql = "*"
+xarray = {extras = ["complete"], version = "*"}
 statsmodels = "*"
+pmdarima = "*"
 plotly = "*"
 dash = "*"
-xarray = {extras = ["complete"], version = "*"}
-pymysql = "*"
 
 [dev-packages]
-jupyter = "*"
-notebook = "*"
 
 [requires]
 python_version = "3.10"

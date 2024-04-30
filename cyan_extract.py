@@ -6,6 +6,13 @@ import requests
 import xarray as xr
 
 
+def convert_int_to_datetime_manual(date_int):
+    year = date_int // 10000
+    month = (date_int % 10000) // 100
+    day = date_int % 100
+    return datetime.date(year, month, day)
+
+
 def getL3Burl(instr_name, prod_suff, temp_res, target_dt):
     from datetime import timedelta
     satfileurl = ''
@@ -60,7 +67,7 @@ def process_L3B_file(ds):
     out = pd.merge_asof(left=df, right=df_BinIndex, left_on="bin_num",
                         right_on="start_num", direction='backward')
 
-    nrows = ds.dims['binIndexDim']
+    nrows = ds.sizes['binIndexDim']
     latbin = (np.arange(0, nrows, dtype=np.float_) + 0.5) * \
         (180.0 / nrows) - 90.0
     out['clat'] = out['index'].apply(lambda x: latbin[x])
@@ -77,14 +84,17 @@ def process_L3B_file(ds):
     return out[out_cols]
 
 
-def extract_cyan(date_frome: datetime.date, date_to: datetime.date, file='cyan_data'):
+def extract_cyan(date_from: int, date_to: int, file='L3B_CYAN_DAILY.parquet'):
+
+    day_first = convert_int_to_datetime_manual(date_from)
+    day_last = convert_int_to_datetime_manual(date_to)
 
     local = "./data/"
     df = pd.DataFrame()
 
-    for i in range((date_to - date_frome).days+1):
+    for i in range((day_last - day_first).days+1):
 
-        day_of = date_frome + datetime.timedelta(days=i)
+        day_of = day_first + datetime.timedelta(days=i)
         url = getL3Burl(instr_name='OLCI', prod_suff='CYAN',
                         temp_res='DAY', target_dt=day_of)
         fn = url.split('/')[-1]
@@ -107,24 +117,12 @@ def extract_cyan(date_frome: datetime.date, date_to: datetime.date, file='cyan_d
         except:
             print("No data for", day_of)
 
-    print("Extraction Completed:", df.shape)
+    print("Extraction Completed. Data size:", df.shape)
 
     df.to_parquet(local + file)
+    print("File saved:", local + file, '\n')
 
 
-# extract_cyan(date_frome=datetime.date(2024, 4, 1),
-#              date_to=datetime.date(2024, 4, 10),
-#              file='cyan_data')
-
-local = "./data/"
-day_of = datetime.date(2024, 4, 1)
-url = getL3Burl(instr_name='OLCI', prod_suff='CYAN',
-                temp_res='DAY', target_dt=day_of)
-print(url)
-fn = url.split('/')[-1]
-print(fn)
-r = requests.get(url)
-with open(local + fn, 'wb') as f:
-    f.write(r.content)
-
-ds = xr.open_dataset(local + fn, group="level-3_binned_data")
+extract_cyan(date_from=20240301,
+             date_to=20240305,
+             file='L3B_CYAN_DAILY.parquet')
