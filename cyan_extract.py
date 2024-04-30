@@ -1,9 +1,49 @@
 import os
 import datetime
+import argparse
 import pandas as pd
 import numpy as np
 import requests
 import xarray as xr
+
+
+def main():
+
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        "-datefrom",
+        "--datefrom",
+        type=int,
+        default=20240101,
+        help="Extract data FROM date yyyymmdd",
+    )
+
+    parser.add_argument(
+        "-dateto",
+        "--dateto",
+        type=int,
+        default=20240110,
+        help="Extract data TO date yyyymmdd",
+    )
+
+    parser.add_argument(
+        "-path",
+        "--path",
+        type=str,
+        default='L3B_CYAN_DAILY.parquet',
+        help="Location and file name to save the extracted data (in .parquet format)",
+    )
+
+    args = parser.parse_args()
+
+    try:
+        extract_cyan(date_from=args.datefrom,
+                     date_to=args.dateto,
+                     file=args.path)
+
+    except:
+        print("Error with input parameters.")
 
 
 def convert_int_to_datetime_manual(date_int):
@@ -123,6 +163,5 @@ def extract_cyan(date_from: int, date_to: int, file='L3B_CYAN_DAILY.parquet'):
     print("File saved:", local + file, '\n')
 
 
-extract_cyan(date_from=20240301,
-             date_to=20240305,
-             file='L3B_CYAN_DAILY.parquet')
+if __name__ == '__main__':
+    main()
